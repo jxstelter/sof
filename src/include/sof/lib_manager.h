@@ -84,6 +84,8 @@ struct ext_library {
 	uint32_t mods_exec_load_cnt;
 	struct ipc_lib_msg *lib_notif_pool;
 	uint32_t lib_notif_count;
+
+	void *runtime_data;
 };
 
 /* lib manager context, used by lib_notification */

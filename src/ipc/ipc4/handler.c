@@ -649,6 +649,9 @@ static int ipc4_process_glb_message(struct ipc4_message_request *ipc4)
 	case SOF_IPC4_GLB_LOAD_LIBRARY:
 		ret = ipc4_load_library(ipc4);
 		break;
+	case 25:
+		ret = ipc4_load_library(ipc4);
+		break;
 #endif
 	case SOF_IPC4_GLB_INTERNAL_MESSAGE:
 		ipc_cmd_err(&ipc_tr, "not implemented ipc message type %d", type);
