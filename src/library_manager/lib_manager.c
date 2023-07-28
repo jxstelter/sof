@@ -445,6 +445,7 @@ static int lib_manager_dma_deinit(struct lib_manager_dma_ext *dma_ext, uint32_t 
 static int lib_manager_load_data_from_host(struct lib_manager_dma_ext *dma_ext, uint32_t size)
 {
 	struct dma_status stat;
+	int loop_count = 1000;
 	int ret;
 
 	ret = dma_get_status(dma_ext->chan->dma->z_dev, dma_ext->chan->index, &stat);
@@ -452,12 +453,20 @@ static int lib_manager_load_data_from_host(struct lib_manager_dma_ext *dma_ext, 
 		return ret;
 
 	/* Wait till whole data acquired */
-	while (stat.pending_length < size) {
+	while (stat.pending_length < size && loop_count) {
 		k_usleep(100);
 
 		ret = dma_get_status(dma_ext->chan->dma->z_dev, dma_ext->chan->index, &stat);
 		if (ret < 0)
 			return ret;
+
+		loop_count--;
+	}
+
+	if (!loop_count) {
+		tr_err(&lib_manager_tr,
+		       "lib_manager_load_data_from_host(): timeout during DMA transfer");
+		return -ETIMEDOUT;
 	}
 
 	return 0;
